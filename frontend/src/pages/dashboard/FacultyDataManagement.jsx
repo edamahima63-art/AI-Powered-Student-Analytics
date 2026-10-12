@@ -7,7 +7,7 @@ import {
 } from 'lucide-react'
 import { manageApi } from '../../services/api'
 
-const API = '/api'
+const API = (import.meta.env.VITE_API_BASE_URL || '/api').replace(/\/$/, '')
 
 // ─── Reusable Toast Notification ──────────────────────────────────────────────
 function Toast({ msg, type, onClose }) {
