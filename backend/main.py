@@ -8,6 +8,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from contextlib import asynccontextmanager
+import os
 
 from database import Base, engine, SessionLocal
 from routers import auth, student, faculty, admin
@@ -40,6 +41,7 @@ app.add_middleware(
         "http://localhost:5173",
         "http://localhost:5174",
         "http://localhost:3000",
+        *([os.environ["FRONTEND_URL"]] if os.environ.get("FRONTEND_URL") else []),
     ],
     allow_credentials=True,
     allow_methods=["*"],
