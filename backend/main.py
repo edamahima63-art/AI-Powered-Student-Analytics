@@ -14,6 +14,7 @@ from database import Base, engine, SessionLocal
 from routers import auth, student, faculty, admin
 import seed
 
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Create all tables
