@@ -11,7 +11,8 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: FRONTEND_URL
-        value: https://ai-powered-student-analytics-duc6.onrender.com
+        # Comma-separated list: Render frontend + Vercel frontend
+        value: https://ai-powered-student-analytics-duc6.onrender.com,https://ai-powered-student-analytics.sigma.vercel.app
 
   - type: web
     name: eduinsight-frontend

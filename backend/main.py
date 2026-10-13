@@ -36,14 +36,23 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
+# Support comma-separated FRONTEND_URL list so multiple frontends can be whitelisted
+# e.g. FRONTEND_URL=https://app.vercel.app,https://app.netlify.app
+def _parse_origins() -> list:
+    base = [
         "http://localhost:5173",
         "http://localhost:5174",
         "http://localhost:3000",
-        *([os.environ["FRONTEND_URL"]] if os.environ.get("FRONTEND_URL") else []),
-    ],
+    ]
+    raw = os.environ.get("FRONTEND_URL", "")
+    if raw:
+        extras = [u.strip() for u in raw.split(",") if u.strip()]
+        base.extend(extras)
+    return base
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=_parse_origins(),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
