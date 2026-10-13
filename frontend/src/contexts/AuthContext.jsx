@@ -30,6 +30,12 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
   const [error, setError]     = useState(null)
 
+  // Wake up the Render backend immediately on app load (free tier spins down after inactivity).
+  // Fire-and-forget — we don't await or block on this.
+  useEffect(() => {
+    fetch(`${API_BASE}/health`).catch(() => {/* silently ignore — backend may still be starting */})
+  }, [])
+
   // On mount: if we have a stored token, validate it with the backend /me endpoint
   useEffect(() => {
     const storedToken = localStorage.getItem('eduinsight_token')

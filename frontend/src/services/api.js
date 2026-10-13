@@ -35,6 +35,10 @@ async function request(endpoint, options = {}) {
     const response = await fetch(url, config)
     if (!response.ok) {
       const errData = await response.json().catch(() => ({}))
+      // 405 means the API proxy is not routing correctly — backend not reachable via this path
+      if (response.status === 405) {
+        throw new ApiError('Cannot reach the server. Please try again in a moment.', 405)
+      }
       throw new ApiError(errData.detail || `Request failed (${response.status})`, response.status)
     }
     if (response.headers.get('content-type')?.includes('text/csv')) {
@@ -44,7 +48,7 @@ async function request(endpoint, options = {}) {
     return response.json()
   } catch (err) {
     if (err instanceof ApiError) throw err
-    throw new ApiError('Unable to connect to server. Is the backend running?', 0)
+    throw new ApiError('Unable to connect to server. Please check your internet connection.', 0)
   }
 }
 

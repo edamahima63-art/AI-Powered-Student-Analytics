@@ -11,7 +11,7 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: FRONTEND_URL
-        # Comma-separated list: Render frontend + Vercel frontend
+        # All known frontend origins — comma-separated (parsed by main.py _parse_origins)
         value: https://ai-powered-student-analytics-duc6.onrender.com,https://ai-powered-student-analytics.sigma.vercel.app
 
   - type: web
@@ -19,9 +19,10 @@ services:
     runtime: static
     rootDir: frontend
     buildCommand: npm ci && npm run build
-    staticPublishPath: frontend/dist
+    staticPublishPath: dist
     envVars:
       - key: NODE_VERSION
         value: 20.11.0
       - key: VITE_API_BASE_URL
         value: https://eduinsight-backend.onrender.com/api
+
