@@ -36,19 +36,32 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Support comma-separated FRONTEND_URL list so multiple frontends can be whitelisted
-# e.g. FRONTEND_URL=https://app.vercel.app,https://app.netlify.app
+# ── Known production frontend origins — always whitelisted regardless of env vars ──
+# Add any new deployment URL here so it works without touching Render/Vercel dashboards.
+_HARDCODED_ORIGINS = [
+    # Local development
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "http://localhost:3000",
+    # Vercel deployment
+    "https://ai-powered-student-analytics.sigma.vercel.app",
+    # Render frontend
+    "https://ai-powered-student-analytics-duc6.onrender.com",
+    # Netlify deployment
+    "https://sensational-biscochitos-f48f56.netlify.app",
+]
+
 def _parse_origins() -> list:
-    base = [
-        "http://localhost:5173",
-        "http://localhost:5174",
-        "http://localhost:3000",
-    ]
+    """Merge hardcoded origins with any extra ones set via FRONTEND_URL env var."""
+    origins = list(_HARDCODED_ORIGINS)
     raw = os.environ.get("FRONTEND_URL", "")
     if raw:
-        extras = [u.strip() for u in raw.split(",") if u.strip()]
-        base.extend(extras)
-    return base
+        for url in raw.split(","):
+            url = url.strip()
+            if url and url not in origins:
+                origins.append(url)
+    return origins
+
 
 app.add_middleware(
     CORSMiddleware,
